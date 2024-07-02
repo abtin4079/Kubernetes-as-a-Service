@@ -1,0 +1,30 @@
+{
+  "deployment": {
+    "appname": "redis",
+    "replicas": 1,
+    "imageaddress": "redis",
+    "imagetag": "latest",
+    "container_port": 6379,
+    "memory_request": "512Mi",
+    "cpu_request": "100m",
+    "env_vars": {
+      "DATABASE_HOST": "DATABASE.example.com",
+      "DATABASE_URL": "DATABASE.URL.example.com"
+    },
+    "secret_name": "redis"
+  },
+  "service": {
+    "name": "redis-service",
+    "app": "redis",
+    "external_access": "NodePort",
+    "node_port": 30000
+  },
+  "secret": { 
+    "name": "redis",
+    "namespace": "redis",
+    "data": {
+      "REDIS_HOST": "redis.example.com",
+      "REDIS_URL": "redis.URL.example.com"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+app: 
+  name: redis-v1
+  namespace: default
+replicas: 1
+
+image:
+  repository: redis
+  tag: latest
+
+service:
+  name: redis-service
+  port: 6379
+  nodePort: 30000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+secretName: redis
+
+env:
+  - name: DATABASE_HOST
+    value: DATABASE.example.com
+  - name: DATABASE_URL
+    value: DATABASE.URL.example.com
+
+

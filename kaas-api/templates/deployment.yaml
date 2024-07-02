@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name}}
+  namespace: {{ .Values.app.namespace}}
+spec:
+  replicas: {{ .Values.replicas}}
+  selector:
+    matchLabels:
+      app: {{ .Values.app.name}}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.app.name}}
+    spec:
+      containers:
+      - env:
+        - name: DATABASE_HOST
+          value: DATABASE.example.com
+        - name: DATABASE_URL
+          value: DATABASE.URL.example.com
+        image: "{{ .Values.image.repository}}:{{ .Values.image.tag }}"
+        name: {{ .Values.app.name}}
+        ports:
+        - containerPort: {{ .Values.service.port}}
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu}}
+            memory: {{ .Values.resources.requests.memory}}
+      #   volumeMounts:
+      #   - mountPath: /etc/secrets
+      #     name: secret-volume
+      # volumes:
+      # - name: secret-volume
+      #   secret:
+      #     secretName: {{ .Values.secretName}}

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abtin
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: abtin
+  template:
+    metadata:
+      labels:
+        app: abtin
+    spec:
+      containers:
+      - env: []
+        image: docker.io/abtin:latest
+        name: abtin
+        ports:
+        - containerPort: 0
+        resources:
+          limits:
+            cpu: '2'
+            memory: 512Mi
+          requests:
+            cpu: '2'
+            memory: 512Mi
+        volumeMounts:
+        - mountPath: /etc/secrets
+          name: secret-volume
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: abtinz4079

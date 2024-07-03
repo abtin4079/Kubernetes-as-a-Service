@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - app-net
+  grafana:
+    image: grafana/grafana-enterprise
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    networks:
+      - app-net
+    volumes:
+      - grafana-storage:/var/lib/grafana
+  app:
+    image: abtinz/kubernetes_api:v60
+    ports:
+      - '7001:7001'
+      - '6969:6969'
+    networks:
+      - app-net
+volumes:
+  grafana-storage:
+  prometheus_data: { }
+networks:
+  app-net:
+    driver: bridge

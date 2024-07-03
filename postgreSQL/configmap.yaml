@@ -3,6 +3,20 @@ kind: ConfigMap
 metadata:
   name: postgres-config
 data:
-  POSTGRES_DB: mydatabase
-  POSTGRES_USER: myuser
-  POSTGRES_PASSWORD: mypassword
+  postgresql.conf: |
+    # PostgreSQL configuration file
+    
+    # General settings
+    listen_addresses = '*'
+    max_connections = 100
+    
+    # Memory and performance tuning
+    shared_buffers = 128MB
+    effective_cache_size = 4GB
+    work_mem = 4MB
+    
+    # Logging
+    logging_collector = on
+    log_directory = '/var/log/postgresql'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
+    log_statement = 'all'

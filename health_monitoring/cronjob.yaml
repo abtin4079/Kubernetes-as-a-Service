@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: health-monitor
+spec:
+  schedule: "*/5 * * * *" # every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: health-check
+              image: appropriate/curl
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  while true; do
+                    for app in $(kubectl get pods -l monitor=true -o jsonpath='{.items[*].metadata.labels.app}'); do
+                      STATUS=$(curl -s -o /dev/null -w '%{http_code}' http://$app/healthz)
+                      if [ $STATUS -eq 200 ]; then
+                        kubectl exec -it postgresql-master-pod -- psql -U postgres -d yourdatabase -c "UPDATE health_status SET success_count = success_count + 1, last_success = now() WHERE app_name = '$app';"
+                      else
+                        kubectl exec -it postgresql-master-pod -- psql -U postgres -d yourdatabase -c "UPDATE health_status SET failure_count = failure_count + 1, last_failure = now() WHERE app_name = '$app';"
+                      fi
+                    done
+                    sleep 5
+                  done
+          restartPolicy: OnFailure

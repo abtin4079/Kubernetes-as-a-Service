@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-master
+spec:
+  selector:
+    matchLabels:
+      app: postgresql-master
+  serviceName: "postgresql-master"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql-master
+    spec:
+      containers:
+        - name: postgresql
+          image:
+            postgres:16.3
+            # env:
+            # - name: POSTGRESQL_REPLICATION_MODE
+            #   value: "master"
+            # - name: POSTGRESQL_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: postgresql-secrets
+            #       key: username
+            # - name: POSTGRESQL_PASSWORD
+            # valueFrom:
+            # secretKeyRef:
+            # name: postgresql-secrets
+            # key: password
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

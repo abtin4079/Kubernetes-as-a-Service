@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: string
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: string
+  template:
+    metadata:
+      labels:
+        app: string
+    spec:
+      containers:
+      - env: []
+        image: string:string
+        name: string
+        ports:
+        - containerPort: 0
+        resources:
+          requests:
+            cpu: string
+            memory: string
+        volumeMounts:
+        - mountPath: /etc/secrets
+          name: secret-volume
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: string

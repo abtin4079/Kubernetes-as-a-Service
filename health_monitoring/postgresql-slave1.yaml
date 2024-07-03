@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-slave
+spec:
+  selector:
+    matchLabels:
+      app: postgresql-slave
+  serviceName: "postgresql-slave"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: postgresql-slave
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:16.3
+          # env:
+          #   - name: POSTGRESQL_REPLICATION_MODE
+          #     value: "slave"
+          #   - name: POSTGRESQL_MASTER_HOST
+          #     value: postgresql-master
+          #   - name: POSTGRESQL_MASTER_PORT_NUMBER
+          #     value: "5432"
+          #   - name: POSTGRESQL_REPLICATION_USER
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: postgresql-secrets
+          #         key: replication_user
+          #   - name: POSTGRESQL_REPLICATION_PASSWORD
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: postgresql-secrets
+          #         key: replication_password
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-config
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"

@@ -1,15 +1,12 @@
-FROM python:3.9.19-alpine
+FROM python:3.9.1-buster
 
 WORKDIR /app
 COPY . /app
 
-RUN pip install fastapi
-RUN pip install requests
-RUN pip install pydantic
-RUN pip install uvicorn
-RUN pip install kuberntes
-RUN pip install redis
-RUN pip install python-dotenv
+RUN pip install --upgrade pip
+COPY ./requirements.txt /var/app
+RUN pip install -r requirements.txt
+
 
 EXPOSE 7001
 EXPOSE 6969
